@@ -1,5 +1,6 @@
 const lib = require("../lib");
 const db = require("../db");
+const mail = require("../mail");
 
 describe('absolute', () => {
     it('should return positive number if the input is positive.', () => {
@@ -18,14 +19,12 @@ describe('absolute', () => {
     });
 });
 
-
 describe('greet', () => {
     it('should return the greeting message.', () => {
         const result = lib.greet("Ubaid");
         expect(result).toMatch(/Ubaid/);
         expect(result).toContain("Ubaid");
     });
-
 });
 
 describe('getCurrencies', () => {
@@ -49,12 +48,9 @@ describe('getCurrencies', () => {
         */
         // Ideal way
         expect(result).toEqual(expect.arrayContaining(['EUR', 'AUD', 'USD']));
-
-
     });
 
 });
-
 
 describe('getProduct', () => {
     it('should return the product with the given id.', () => {
@@ -77,14 +73,13 @@ describe('registerUser', () => {
         const result = lib.registerUser("Ubaid");
         expect(result).toMatchObject({ username: "Ubaid" });
         expect(result.id).toBeGreaterThan(0);
-
     });
 });
 
 describe('applyDiscount', () => {
     it('should apply 10% discount if customer has more than 10 points.', () => {
-        // Create a mock function to remove the depenndecy from db
-        console.log("Fake reading customer...");
+        // Create a mock function to remove the dependency from db
+        console.log("Fake reading customer to apply the discount...");
         db.getCustomerSync = function(customerId) {
             return { id: customerId, points: 20 };
         }
@@ -92,6 +87,20 @@ describe('applyDiscount', () => {
         lib.applyDiscount(order);
         expect(order.totalPrice).toBe(9);
     });
+});
 
-
+describe('notifyCustomer', () => {
+    it('should send an email to the customer.', () => {
+        // Create a mock function to remove the dependency from db
+        console.log("Fake reading customer to send an email...");
+        db.getCustomerSync = function(customerId) {
+            return { email: 'a' };
+        }
+        let mailSent = false;
+        mail.send = function(email, message) {
+            mailSent = true;
+        }
+        lib.notifyCustomer({ customerId: 1 });
+        expect(mailSent).toBe(true);
+    });
 });
