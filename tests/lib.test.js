@@ -1,4 +1,5 @@
 const lib = require("../lib");
+const db = require("../db");
 
 describe('absolute', () => {
     it('should return positive number if the input is positive.', () => {
@@ -78,4 +79,19 @@ describe('registerUser', () => {
         expect(result.id).toBeGreaterThan(0);
 
     });
+});
+
+describe('applyDiscount', () => {
+    it('should apply 10% discount if customer has more than 10 points.', () => {
+        // Create a mock function to remove the depenndecy from db
+        console.log("Fake reading customer...");
+        db.getCustomerSync = function(customerId) {
+            return { id: customerId, points: 20 };
+        }
+        const order = { customerId: 1, totalPrice: 10 };
+        lib.applyDiscount(order);
+        expect(order.totalPrice).toBe(9);
+    });
+
+
 });
