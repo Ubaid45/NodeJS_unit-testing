@@ -17,6 +17,11 @@ describe('absolute', () => {
 });
 
 
-/*test('Our second test', () => {
-    throw new Error("Error");
-});*/
+describe('greet', () => {
+    it('should return the greeting message.', () => {
+        const result = lib.greet("Ubaid");
+        expect(result).toMatch(/Ubaid/);
+        expect(result).toContain("Ubaid");
+    });
+
+});
